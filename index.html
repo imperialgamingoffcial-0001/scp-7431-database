@@ -5,9 +5,431 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SCP-7431 | SCP Foundation Database</title>
 
-    <link rel="stylesheet" href="style.css">
-
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:#0b0b0b;
+    color:#d7d7d7;
+    font-family:"Roboto",sans-serif;
+    overflow-x:hidden;
+    line-height:1.7;
+}
+
+::-webkit-scrollbar{
+    width:12px;
+}
+
+::-webkit-scrollbar-track{
+    background:#101010;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#4b0000;
+    border-radius:50px;
+}
+
+::-webkit-scrollbar-thumb:hover{
+    background:#7b0000;
+}
+
+#loading-screen{
+    position:fixed;
+    inset:0;
+    background:#050505;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:99999;
+    animation:fadeOut 1s ease forwards;
+    animation-delay:3s;
+}
+
+.loader{
+    width:600px;
+    text-align:center;
+}
+
+.loader h1{
+    font-size:48px;
+    letter-spacing:6px;
+    color:white;
+    font-family:"Share Tech Mono",monospace;
+}
+
+.loader p{
+    color:#888;
+    margin-top:12px;
+    margin-bottom:35px;
+    letter-spacing:2px;
+}
+
+.loading-bar{
+    width:100%;
+    height:12px;
+    background:#222;
+    overflow:hidden;
+    border-radius:50px;
+}
+
+.loading-fill{
+    width:0;
+    height:100%;
+    background:#a10000;
+    animation:loading 3s linear forwards;
+}
+
+.loader span{
+    display:block;
+    margin-top:25px;
+    color:#777;
+    font-size:15px;
+}
+
+header{
+    width:100%;
+    background:#111;
+    border-bottom:2px solid #7d0000;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 70px;
+    position:sticky;
+    top:0;
+    z-index:900;
+}
+
+.logo h1{
+    color:white;
+    font-size:28px;
+    letter-spacing:4px;
+    font-family:"Share Tech Mono",monospace;
+}
+
+.logo p{
+    color:#8f8f8f;
+    margin-top:6px;
+    font-size:13px;
+}
+
+nav{
+    display:flex;
+    gap:28px;
+}
+
+nav a{
+    color:#d5d5d5;
+    text-decoration:none;
+    transition:.3s;
+    font-size:15px;
+}
+
+nav a:hover{
+    color:#ff3d3d;
+}
+
+.hero{
+    width:100%;
+    padding:70px;
+    background:linear-gradient(rgba(0,0,0,.82),rgba(0,0,0,.92));
+}
+
+.classification{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:20px;
+}
+
+.class-card{
+    background:#141414;
+    border:1px solid #2f2f2f;
+    border-left:5px solid #8f0000;
+    padding:25px;
+    transition:.25s;
+    box-shadow:0 0 12px rgba(0,0,0,.4);
+}
+
+.class-card:hover{
+    transform:translateY(-4px);
+    border-left-color:#d80000;
+    box-shadow:0 0 18px rgba(180,0,0,.35);
+}
+
+.class-card h3{
+    color:#8c8c8c;
+    font-size:13px;
+    letter-spacing:2px;
+    margin-bottom:12px;
+    text-transform:uppercase;
+}
+
+.class-card p{
+    color:white;
+    font-size:24px;
+    font-weight:700;
+    font-family:"Share Tech Mono",monospace;
+}
+
+main{
+    width:min(1200px,90%);
+    margin:60px auto;
+}
+
+.warning{
+    background:#170000;
+    border-left:6px solid #c40000;
+    padding:28px;
+    margin-bottom:40px;
+    box-shadow:0 0 18px rgba(180,0,0,.2);
+}
+
+.warning h2{
+    color:#ff5555;
+    font-size:24px;
+    margin-bottom:15px;
+    font-family:"Share Tech Mono",monospace;
+    letter-spacing:2px;
+}
+
+.warning p{
+    color:#d4d4d4;
+}
+
+.scp-section{
+    background:#111;
+    border:1px solid #2b2b2b;
+    margin-bottom:18px;
+    overflow:hidden;
+    box-shadow:0 0 10px rgba(0,0,0,.25);
+    animation:fadeIn .6s ease;
+}
+
+.accordion{
+    width:100%;
+    background:#151515;
+    color:#f2f2f2;
+    border:none;
+    outline:none;
+    cursor:pointer;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:22px 28px;
+    font-size:18px;
+    font-weight:700;
+    letter-spacing:1px;
+    transition:.25s;
+}
+
+.accordion:hover{
+    background:#1c1c1c;
+}
+
+.accordion span{
+    font-size:30px;
+    color:#c40000;
+    transition:.3s;
+    user-select:none;
+}
+
+.accordion.active{
+    background:#240000;
+}
+
+.accordion.active span{
+    transform:rotate(45deg);
+    color:#ff4a4a;
+}
+
+.content{
+    max-height:0;
+    overflow:hidden;
+    background:#101010;
+    transition:max-height .45s ease;
+}
+
+.content p{
+    padding:30px;
+    color:#d2d2d2;
+    font-size:16px;
+    line-height:1.9;
+}
+
+.content ul{
+    padding:0 50px 30px 70px;
+}
+
+.content li{
+    margin:12px 0;
+    color:#d2d2d2;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin:30px 0;
+}
+
+th{
+    background:#2a0000;
+    color:white;
+    padding:16px;
+    border:1px solid #444;
+    text-align:left;
+}
+
+td{
+    padding:16px;
+    border:1px solid #333;
+    color:#d0d0d0;
+    background:#141414;
+}
+
+.info-box{
+    margin:25px 30px;
+    padding:20px;
+    background:#161616;
+    border-left:4px solid #9c0000;
+}
+
+.info-box h3{
+    color:#ff6262;
+    margin-bottom:12px;
+    font-family:"Share Tech Mono", monospace;
+}
+
+.info-box p{
+    padding:0;
+}
+
+.info-box ul{
+    padding: 0 0 0 30px;
+    margin: 12px 0;
+}
+
+.info-box li{
+    margin: 8px 0;
+    color: #d2d2d2;
+}
+
+@keyframes loading{
+    from{width:0%;}
+    to{width:100%;}
+}
+
+@keyframes fadeOut{
+    to{opacity:0;visibility:hidden;}
+}
+
+@keyframes fadeIn{
+    from{opacity:0;transform:translateY(20px);}
+    to{opacity:1;transform:translateY(0);}
+}
+
+::selection{
+    background:#8f0000;
+    color:#ffffff;
+}
+
+a{
+    transition:.25s;
+}
+
+a:hover{
+    color:#ff4444;
+}
+
+img{
+    max-width:100%;
+    display:block;
+}
+
+footer{
+    margin-top:80px;
+    padding:40px;
+    text-align:center;
+    border-top:1px solid #2f2f2f;
+    background:#0d0d0d;
+}
+
+footer p{
+    color:#777;
+    margin:5px 0;
+    letter-spacing:1px;
+}
+
+@media (max-width:1000px){
+    header{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:20px;
+        padding:25px;
+    }
+    nav{
+        flex-wrap:wrap;
+        gap:15px;
+    }
+    .hero{
+        padding:40px 25px;
+    }
+    main{
+        width:95%;
+    }
+    .classification{
+        grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    }
+}
+
+@media (max-width:700px){
+    .logo h1{
+        font-size:22px;
+    }
+    .logo p{
+        font-size:12px;
+    }
+    .class-card{
+        padding:18px;
+    }
+    .class-card p{
+        font-size:18px;
+    }
+    .accordion{
+        font-size:16px;
+        padding:18px;
+    }
+    .content p{
+        padding:20px;
+    }
+    .warning{
+        padding:20px;
+    }
+    .loader{
+        width:90%;
+    }
+    .loader h1{
+        font-size:30px;
+    }
+    nav{
+        gap: 10px;
+    }
+    nav a{
+        font-size: 13px;
+    }
+    header{
+        padding: 15px;
+    }
+}
+    </style>
 </head>
 <body>
 
@@ -15,24 +437,19 @@
     <div class="loader">
         <h1>SCP FOUNDATION</h1>
         <p>SECURE. CONTAIN. PROTECT.</p>
-
         <div class="loading-bar">
             <div class="loading-fill"></div>
         </div>
-
         <span>Authorising Level 4 Clearance...</span>
     </div>
 </div>
 
 <header>
-
     <div class="logo">
         <h1>SCP FOUNDATION</h1>
         <p>Secure. Contain. Protect.</p>
     </div>
-
     <nav>
-
         <a href="#overview">Overview</a>
         <a href="#containment">Containment</a>
         <a href="#description">Description</a>
@@ -41,42 +458,32 @@
         <a href="#combat">Combat</a>
         <a href="#history">History</a>
         <a href="#assessment">Assessment</a>
-
     </nav>
-
 </header>
 
 <section class="hero">
-
     <div class="classification">
-
         <div class="class-card">
             <h3>ITEM #</h3>
             <p>SCP-7431</p>
         </div>
-
         <div class="class-card">
             <h3>OBJECT CLASS</h3>
             <p>KETER</p>
         </div>
-
         <div class="class-card">
             <h3>THREAT LEVEL</h3>
             <p>BLACK</p>
         </div>
-
         <div class="class-card">
             <h3>SITE</h3>
             <p>Site-47</p>
         </div>
-
         <div class="class-card">
             <h3>CLEARANCE</h3>
             <p>LEVEL 4</p>
         </div>
-
     </div>
-
 </section>
 
 <main>
@@ -553,7 +960,65 @@
     <p style="margin-top: 15px; font-size: 12px; color: #555;">For inquiries, contact your Site Administrator</p>
 </footer>
 
-<script src="script.js"></script>
+<script>
+window.addEventListener("load", () => {
+    const loading = document.getElementById("loading-screen");
+    setTimeout(() => {
+        loading.style.display = "none";
+    }, 4000);
+});
+
+const accordions = document.querySelectorAll(".accordion");
+accordions.forEach(button => {
+    button.addEventListener("click", () => {
+        button.classList.toggle("active");
+        const content = button.nextElementSibling;
+        if(content.style.maxHeight){
+            content.style.maxHeight = null;
+        }else{
+            content.style.maxHeight = content.scrollHeight + "px";
+        }
+    });
+});
+
+window.addEventListener("DOMContentLoaded", () => {
+    const first = document.querySelector(".accordion");
+    first.classList.add("active");
+    const content = first.nextElementSibling;
+    content.style.maxHeight = content.scrollHeight + "px";
+});
+
+document.querySelectorAll('nav a').forEach(anchor => {
+    anchor.addEventListener("click", function(e){
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute("href"));
+        window.scrollTo({
+            top: target.offsetTop - 90,
+            behavior: "smooth"
+        });
+    });
+});
+
+const observer = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+        if(entry.isIntersecting){
+            entry.target.style.opacity="1";
+            entry.target.style.transform="translateY(0px)";
+        }
+    });
+},{
+    threshold:0.15
+});
+
+document.querySelectorAll(".scp-section").forEach(section=>{
+    section.style.opacity="0";
+    section.style.transform="translateY(30px)";
+    section.style.transition=".6s";
+    observer.observe(section);
+});
+
+console.log("SCP FOUNDATION DATABASE LOADED");
+</script>
 
 </body>
 </html>
