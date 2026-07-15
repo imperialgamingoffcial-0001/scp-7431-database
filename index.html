@@ -180,6 +180,27 @@ nav a:hover{
     font-family:"Share Tech Mono",monospace;
 }
 
+.class-card.threat-omni p{
+    background: linear-gradient(135deg, #ff00ff, #00ffff, #ffff00, #ff00ff);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift{
+    0%{
+        background-position: 0% 50%;
+    }
+    50%{
+        background-position: 100% 50%;
+    }
+    100%{
+        background-position: 0% 50%;
+    }
+}
+
 main{
     width:min(1200px,90%);
     margin:60px auto;
@@ -471,9 +492,9 @@ footer p{
             <h3>OBJECT CLASS</h3>
             <p>KETER</p>
         </div>
-        <div class="class-card">
+        <div class="class-card threat-omni">
             <h3>THREAT LEVEL</h3>
-            <p>BLACK</p>
+            <p>OMNI</p>
         </div>
         <div class="class-card">
             <h3>SITE</h3>
@@ -506,7 +527,7 @@ footer p{
             <h3>CRITICAL STATISTICS</h3>
             <ul>
                 <li><strong>Height:</strong> 2.8 meters</li>
-                <li><strong>Threat Rating:</strong> BLACK (Extreme)</li>
+                <li><strong>Threat Rating:</strong> OMNI (Existential)</li>
                 <li><strong>Containment Difficulty:</strong> Extreme</li>
                 <li><strong>Escape Risk:</strong> Extreme</li>
                 <li><strong>Civilian Survival Rate:</strong> 4%</li>
@@ -912,7 +933,7 @@ footer p{
             </tr>
             <tr>
                 <td><strong>Overall Threat Rating</strong></td>
-                <td><strong>BLACK</strong></td>
+                <td><strong style="background: linear-gradient(135deg, #ff00ff, #00ffff, #ffff00, #ff00ff); background-size: 300% 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: gradientShift 3s ease infinite;">OMNI</strong></td>
             </tr>
         </table>
 
